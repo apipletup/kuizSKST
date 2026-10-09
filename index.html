@@ -1,0 +1,600 @@
+<!DOCTYPE html>
+<html lang="ms">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Ekspedisi Tatabahasa 🦁 Kuiz Kanak-Kanak</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Baloo+2:wght@400;600;700;800&display=swap" rel="stylesheet">
+
+    <style>
+        * { font-family: 'Baloo 2', cursive; }
+
+        body {
+            background: linear-gradient(180deg, #7dd3fc 0%, #a7f3d0 55%, #fde68a 100%);
+            min-height: 100vh;
+            overflow-x: hidden;
+        }
+
+        /* Awan bergerak */
+        .cloud {
+            position: fixed; font-size: 3rem; opacity: 0.9; z-index: 0;
+            animation: drift linear infinite;
+        }
+        @keyframes drift {
+            from { transform: translateX(-15vw); }
+            to   { transform: translateX(115vw); }
+        }
+
+        /* Daun jatuh */
+        .leaf {
+            position: fixed; top: -40px; font-size: 1.5rem; z-index: 0;
+            animation: fall linear infinite;
+        }
+        @keyframes fall {
+            0%   { transform: translateY(-5vh) rotate(0deg); opacity: 1; }
+            100% { transform: translateY(110vh) rotate(360deg); opacity: 0.4; }
+        }
+
+        .bounce-in { animation: bounceIn 0.5s cubic-bezier(0.68, -0.55, 0.27, 1.55); }
+        @keyframes bounceIn {
+            0%   { opacity: 0; transform: scale(0.6) translateY(20px); }
+            100% { opacity: 1; transform: scale(1) translateY(0); }
+        }
+
+        .option-btn {
+            transition: all 0.15s;
+            border: 4px solid #e2e8f0;
+            border-radius: 1.25rem;
+        }
+        .option-btn:hover:not(:disabled) {
+            transform: translateY(-4px) scale(1.02);
+            border-color: #f59e0b;
+            box-shadow: 0 8px 0 rgba(0,0,0,0.1);
+        }
+        .option-btn:active:not(:disabled) { transform: translateY(0) scale(0.99); }
+
+        .correct-ans {
+            background-color: #dcfce7 !important;
+            border-color: #22c55e !important;
+            color: #166534 !important;
+            animation: wiggle 0.5s ease;
+        }
+        .wrong-ans {
+            background-color: #fee2e2 !important;
+            border-color: #ef4444 !important;
+            color: #991b1b !important;
+            animation: shake 0.45s ease;
+        }
+        @keyframes wiggle {
+            0%,100% { transform: rotate(0deg); }
+            25% { transform: rotate(-3deg) scale(1.03); }
+            75% { transform: rotate(3deg) scale(1.03); }
+        }
+        @keyframes shake {
+            0%,100% { transform: translateX(0); }
+            20% { transform: translateX(-8px); }
+            40% { transform: translateX(8px); }
+            60% { transform: translateX(-6px); }
+            80% { transform: translateX(6px); }
+        }
+        .disabled-ans { opacity: 0.55; cursor: not-allowed; }
+
+        /* Track kemajuan dengan monyet */
+        .monkey { transition: left 0.6s cubic-bezier(0.34, 1.56, 0.64, 1); }
+
+        /* Konfeti */
+        .confetti-piece {
+            position: fixed; top: -20px; z-index: 50; pointer-events: none;
+            animation: confettiFall linear forwards;
+        }
+        @keyframes confettiFall {
+            0%   { transform: translateY(0) rotate(0deg); opacity: 1; }
+            100% { transform: translateY(110vh) rotate(720deg); opacity: 0.6; }
+        }
+
+        .pop { animation: pop 0.4s cubic-bezier(0.68, -0.55, 0.27, 1.55); }
+        @keyframes pop {
+            0% { transform: scale(0); }
+            100% { transform: scale(1); }
+        }
+
+        .float-slow { animation: floaty 3s ease-in-out infinite; }
+        @keyframes floaty {
+            0%,100% { transform: translateY(0); }
+            50% { transform: translateY(-10px); }
+        }
+    </style>
+<base target="_blank">
+</head>
+<body class="flex items-center justify-center p-4">
+
+    <!-- Awan & daun hiasan -->
+    <div class="cloud" style="top: 8%;  animation-duration: 40s; animation-delay: 0s;">☁️</div>
+    <div class="cloud" style="top: 20%; animation-duration: 55s; animation-delay: -20s;">☁️</div>
+    <div class="cloud" style="top: 5%;  animation-duration: 65s; animation-delay: -35s;">⛅</div>
+    <div class="leaf" style="left: 10%; animation-duration: 9s;  animation-delay: 0s;">🍃</div>
+    <div class="leaf" style="left: 30%; animation-duration: 12s; animation-delay: -4s;">🌿</div>
+    <div class="leaf" style="left: 55%; animation-duration: 10s; animation-delay: -7s;">🍃</div>
+    <div class="leaf" style="left: 75%; animation-duration: 13s; animation-delay: -2s;">🌿</div>
+    <div class="leaf" style="left: 90%; animation-duration: 11s; animation-delay: -9s;">🍃</div>
+
+    <div class="max-w-3xl w-full rounded-[2rem] shadow-2xl overflow-hidden relative z-10" style="background:#fffbeb; border:6px solid #f59e0b;">
+
+        <!-- Header rimba -->
+        <div class="text-white p-6 text-center relative" style="background: linear-gradient(135deg, #16a34a 0%, #059669 60%, #0d9488 100%);">
+            <div class="text-4xl mb-1 float-slow inline-block">🦁</div>
+            <h1 class="text-2xl md:text-4xl font-extrabold drop-shadow-md">Ekspedisi Tatabahasa!</h1>
+            <p class="mt-1 text-green-100 font-semibold">Jom bantu Singa Belang mengumpul bintang! ⭐</p>
+            <!-- ombak bawah -->
+            <svg class="absolute -bottom-1 left-0 w-full" viewBox="0 0 1440 40" preserveAspectRatio="none" style="height:28px;">
+                <path d="M0,20 C240,45 480,0 720,15 C960,30 1200,0 1440,20 L1440,40 L0,40 Z" fill="#fffbeb"></path>
+            </svg>
+        </div>
+
+        <div class="p-6 md:p-8">
+
+            <!-- Skrin Mula -->
+            <div id="intro-screen" class="text-center space-y-6 bounce-in">
+                <div class="p-6 rounded-3xl border-4 border-dashed border-orange-300 bg-orange-50">
+                    <div class="text-6xl mb-2">🎒📚</div>
+                    <h2 class="text-2xl font-extrabold text-orange-600 mb-3">Hai, Pengembara!</h2>
+                    <p class="text-gray-600 font-semibold mb-4">
+                        Selesaikan <strong>15 cabaran</strong> dan kumpulkan bintang sebanyak mungkin!
+                    </p>
+                    <div class="flex flex-wrap justify-center gap-2 mb-4">
+                        <span class="bg-pink-200 px-3 py-1 rounded-full text-sm font-bold text-pink-800 shadow-sm">🍌 Penjodoh Bilangan</span>
+                        <span class="bg-blue-200 px-3 py-1 rounded-full text-sm font-bold text-blue-800 shadow-sm">🏃 Kata Kerja</span>
+                        <span class="bg-purple-200 px-3 py-1 rounded-full text-sm font-bold text-purple-800 shadow-sm">🌈 Kata Adjektif</span>
+                        <span class="bg-yellow-200 px-3 py-1 rounded-full text-sm font-bold text-yellow-800 shadow-sm">🦜 Peribahasa</span>
+                        <span class="bg-green-200 px-3 py-1 rounded-full text-sm font-bold text-green-800 shadow-sm">🧩 Kata Majmuk</span>
+                        <span class="bg-orange-200 px-3 py-1 rounded-full text-sm font-bold text-orange-800 shadow-sm">🔗 Kata Hubung</span>
+                        <span class="bg-teal-200 px-3 py-1 rounded-full text-sm font-bold text-teal-800 shadow-sm">✅ Ayat Betul &amp; Salah</span>
+                    </div>
+                    <p class="text-sm text-gray-500 font-semibold italic">
+                        * Tiada data peribadi yang dikumpul. Cuba berulang kali untuk dapat 3 bintang!
+                    </p>
+                </div>
+                <button onclick="startQuiz()" class="text-white font-extrabold text-xl py-4 px-10 rounded-full shadow-lg transform transition hover:scale-110 hover:rotate-1"
+                        style="background: linear-gradient(135deg, #f97316, #ea580c); box-shadow: 0 6px 0 #c2410c;">
+                    🚀 Mula Pengembaraan!
+                </button>
+            </div>
+
+            <!-- Skrin Soalan -->
+            <div id="quiz-screen" class="hidden">
+                <!-- Bar Kemajuan -->
+                <div class="mb-6">
+                    <div class="flex justify-between items-center text-sm text-gray-500 mb-2 font-bold">
+                        <span id="question-counter">Soalan 1 / 15</span>
+                        <span id="category-badge" class="px-3 py-1 rounded-full text-white shadow-sm">Kategori</span>
+                    </div>
+                    <div class="relative w-full h-6 rounded-full border-4 border-amber-800/30" style="background:#fef3c7;">
+                        <div id="progress-bar" class="h-full rounded-full" style="width: 0%; background: linear-gradient(90deg, #4ade80, #16a34a);"></div>
+                        <span id="monkey" class="monkey absolute -top-5 text-2xl" style="left: 0%;">🐒</span>
+                    </div>
+                </div>
+
+                <!-- Soalan -->
+                <div class="mb-8 bounce-in" id="question-container">
+                    <div class="bg-white rounded-3xl border-4 border-green-300 p-5 shadow-md">
+                        <div class="text-3xl mb-2">❓</div>
+                        <h3 id="question-text" class="text-xl md:text-2xl font-bold leading-snug text-gray-800"></h3>
+                    </div>
+                </div>
+
+                <!-- Pilihan Jawapan -->
+                <div id="options-container" class="space-y-3 bounce-in"></div>
+
+                <!-- Maklum Balas -->
+                <div id="feedback-container" class="hidden mt-6 p-5 rounded-3xl border-4 bounce-in">
+                    <h4 id="feedback-title" class="font-extrabold text-2xl mb-1"></h4>
+                    <p id="feedback-text" class="text-gray-700 font-semibold"></p>
+                    <div class="mt-4 text-right">
+                        <button id="next-btn" onclick="nextQuestion()"
+                                class="text-white font-extrabold py-3 px-8 rounded-full shadow-lg transform transition hover:scale-105"
+                                style="background: linear-gradient(135deg, #f97316, #ea580c); box-shadow: 0 5px 0 #c2410c;">
+                            Soalan Seterusnya ➔
+                        </button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Skrin Keputusan Akhir -->
+            <div id="result-screen" class="hidden text-center space-y-6 bounce-in">
+                <div class="py-6">
+                    <div class="text-7xl mb-2 float-slow inline-block">🏆</div>
+                    <h2 class="text-3xl font-extrabold text-gray-800 mb-1">Ekspedisi Tamat!</h2>
+                    <p class="text-gray-600 font-semibold mb-4">Lihat harta karun yang anda kutip:</p>
+
+                    <div id="stars-display" class="text-5xl mb-3 tracking-widest"></div>
+
+                    <div class="inline-block rounded-3xl p-6 mb-4 border-4 border-amber-400 bg-amber-50 shadow-lg">
+                        <p class="text-5xl font-extrabold text-amber-600" id="final-score">0 / 15</p>
+                        <p class="text-lg mt-2 font-extrabold" id="score-message">Tahniah!</p>
+                    </div>
+
+                    <p class="text-gray-500 font-semibold mb-6 px-4" id="encouragement-text"></p>
+
+                    <button onclick="restartQuiz()"
+                            class="text-white font-extrabold text-lg py-3 px-8 rounded-full shadow-lg transform transition hover:scale-110 flex items-center justify-center mx-auto gap-2"
+                            style="background: linear-gradient(135deg, #f97316, #ea580c); box-shadow: 0 6px 0 #c2410c;">
+                        🔄 Cuba Lagi!
+                    </button>
+                </div>
+            </div>
+
+        </div>
+    </div>
+
+    <script>
+const quizData = [
+            // Penjodoh Bilangan
+            {
+                category: "Penjodoh Bilangan",
+                question: "Ibu membeli tiga _____ payung di pasar malam untuk persediaan musim hujan.",
+                options: [
+                    { text: "buah", isCorrect: false, explanation: "Salah. 'Buah' digunakan untuk benda yang besar dan padu seperti kereta, rumah, atau negara." },
+                    { text: "kaki", isCorrect: true, explanation: "Tepat! 'Kaki' ialah penjodoh bilangan untuk benda yang bertangkai seperti payung atau cendawan." },
+                    { text: "batang", isCorrect: false, explanation: "Salah. 'Batang' digunakan untuk benda yang panjang dan lurus seperti sungai, pen, atau pokok." }
+                ]
+            },
+            {
+                category: "Penjodoh Bilangan",
+                question: "Pak Ali memikul dua _____ pisang yang baru ditebang dari kebunnya.",
+                options: [
+                    { text: "tandan", isCorrect: true, explanation: "Betul! 'Tandan' digunakan untuk buah-buahan yang bergugus seperti pisang, kelapa, atau kelapa sawit." },
+                    { text: "sikat", isCorrect: false, explanation: "Salah. 'Sikat' (atau sisir) hanyalah sebahagian kecil daripada satu tandan pisang." },
+                    { text: "biji", isCorrect: false, explanation: "Salah. 'Biji' digunakan untuk buah, sayur, atau benda yang kecil dan tunggal." }
+                ]
+            },
+            // Kata Kerja
+            {
+                category: "Kata Kerja",
+                question: "Pemuda yang berani itu _____ ke dalam sungai deras untuk menyelamatkan kanak-kanak yang lemas.",
+                options: [
+                    { text: "melompat", isCorrect: false, explanation: "Kurang tepat. Melompat biasanya pergerakan ke atas atau ke hadapan di atas darat." },
+                    { text: "terjatuh", isCorrect: false, explanation: "Salah. 'Terjatuh' bermaksud perbuatan yang tidak disengajakan." },
+                    { text: "terjun", isCorrect: true, explanation: "Tepat! 'Terjun' bermaksud perbuatan melompat ke bawah (seperti ke dalam air) dengan sengaja." }
+                ]
+            },
+            {
+                category: "Kata Kerja",
+                question: "Nenek sedang duduk di serambi sambil _____ tikar mengkuang yang akan dihadiahkan kepada cucunya.",
+                options: [
+                    { text: "menganyam", isCorrect: true, explanation: "Betul! Perbuatan menyilangkan bahan seperti daun mengkuang atau rotan dipanggil 'menganyam'." },
+                    { text: "menenun", isCorrect: false, explanation: "Salah. 'Menenun' dikhaskan untuk proses membuat kain daripada benang (contoh: menenun songket)." },
+                    { text: "menyulam", isCorrect: false, explanation: "Salah. 'Menyulam' ialah perbuatan menjahit corak hiasan pada permukaan kain." }
+                ]
+            },
+            // Kata Adjektif
+            {
+                category: "Kata Adjektif",
+                question: "Suara penyanyi terkenal itu sungguh _____ sehingga memukau para penonton di dewan tersebut.",
+                options: [
+                    { text: "nyaring", isCorrect: false, explanation: "Salah. 'Nyaring' bermaksud bunyi yang kuat dan tinggi, tetapi tidak semestinya sedap didengar." },
+                    { text: "merdu", isCorrect: true, explanation: "Tepat! 'Merdu' ialah kata adjektif pancaindera (pendengaran) yang membawa maksud bunyi yang sedap didengar." },
+                    { text: "lunak", isCorrect: false, explanation: "Kurang tepat. 'Lunak' lebih merujuk kepada tekstur makanan atau keadaan yang lembut/lembayung, walaupun kadang-kala dipinjam untuk suara." }
+                ]
+            },
+            {
+                category: "Kata Adjektif",
+                question: "Udara di kawasan pergunungan Kinabalu pada waktu pagi sangat _____ dan menyegarkan.",
+                options: [
+                    { text: "kencang", isCorrect: false, explanation: "Salah. 'Kencang' digunakan untuk tiupan angin yang kuat, bukan untuk kualiti udara." },
+                    { text: "sejuk", isCorrect: false, explanation: "Kurang tepat untuk menyokong perkataan 'menyegarkan' dalam konteks cuaca pergunungan berbanding jawapan yang lebih jitu." },
+                    { text: "nyaman", isCorrect: true, explanation: "Betul! 'Nyaman' merujuk kepada udara yang segar, bersih, dan menyejukkan." }
+                ]
+            },
+            // Peribahasa
+            {
+                category: "Peribahasa",
+                question: "Sikap Aminah yang suka menolong ibunya di dapur dan guru di sekolah diibaratkan seperti _____ .",
+                options: [
+                    { text: "ulat buku", isCorrect: false, explanation: "Salah. 'Ulat buku' bermaksud orang yang sangat suka membaca buku." },
+                    { text: "ringan tulang", isCorrect: true, explanation: "Tepat! 'Ringan tulang' bermaksud orang yang rajin bekerja dan suka menolong." },
+                    { text: "berat tulang", isCorrect: false, explanation: "Salah. 'Berat tulang' membawa maksud orang yang malas bekerja." }
+                ]
+            },
+            
+            {
+                category: "Peribahasa",
+                question: "\"Dalam membuat keputusan, janganlah bertindak melulu kerana _____. Fikirlah masak-masak,\" nasihat Cikgu Ali.",
+                options: [
+                    { text: "terlajak perahu boleh diundur, terlajak kata buruk padahnya", isCorrect: true, explanation: "Betul! Peribahasa ini menasihati kita agar berhati-hati sebelum bercakap atau bertindak kerana kesilapan tidak boleh ditarik balik." },
+                    { text: "air dicincang tidak akan putus", isCorrect: false, explanation: "Salah. Peribahasa ini merujuk kepada ikatan persaudaraan yang tidak akan putus walaupun berlaku pergaduhan." },
+                    { text: "seperti pahat dengan penukul", isCorrect: false, explanation: "Salah. Ini bermaksud orang yang hanya bekerja jika disuruh atau diarahkan." }
+                ]
+            },
+            // Kata Majmuk
+            {
+                category: "Kata Majmuk",
+                question: "Borang permohonan kemasukan ke asrama itu perlu diserahkan kepada _____ yang bertugas di kaunter.",
+                options: [
+                    { text: "reka bentuk", isCorrect: false, explanation: "Salah. 'Reka bentuk' bermaksud corak atau susunan sesuatu ciptaan/bangunan." },
+                    { text: "atur cara", isCorrect: false, explanation: "Salah. 'Atur cara' bermaksud susunan program atau majlis." },
+                    { text: "urus setia", isCorrect: true, explanation: "Tepat! 'Urus setia' ialah kumpulan atau individu yang menguruskan pentadbiran sesuatu program/organisasi." }
+                ]
+            },
+            {
+                category: "Kata Majmuk",
+                question: "Pihak polis telah menjalankan _____ ke atas suspek selama beberapa jam untuk mendapatkan maklumat lanjut.",
+                options: [
+                    { text: "soal siasat", isCorrect: true, explanation: "Betul! 'Soal siasat' ialah kata majmuk yang bermaksud proses bertanya secara terperinci untuk mendapatkan maklumat (biasanya dalam siasatan polis)." },
+                    { text: "temu duga", isCorrect: false, explanation: "Salah. 'Temu duga' ialah sesi soal jawab untuk menilai calon bagi mendapatkan pekerjaan atau jawatan." },
+                    { text: "campur tangan", isCorrect: false, explanation: "Salah. 'Campur tangan' bermaksud menyertai atau masuk campur dalam urusan orang lain." }
+                ]
+            },
+            // Kata Hubung
+            {
+                category: "Kata Hubung",
+                question: "Ayah membaca surat khabar di beranda _____ menghirup secawan kopi panas.",
+                options: [
+                    { text: "lalu", isCorrect: false, explanation: "Salah. 'Lalu' digunakan untuk dua perbuatan yang berlaku secara berturut-turut (satu lepas satu)." },
+                    { text: "sambil", isCorrect: true, explanation: "Tepat! 'Sambil' digunakan untuk menunjukkan dua perbuatan yang dilakukan pada masa yang sama (serentak)." },
+                    { text: "kerana", isCorrect: false, explanation: "Salah. 'Kerana' merupakan kata hubung pancangan keterangan sebab." }
+                ]
+            },
+            {
+                category: "Kata Hubung",
+                question: "Zakir tetap pergi ke padang untuk latihan bola sepak _____ hujan turun dengan lebat.",
+                options: [
+                    { text: "walaupun", isCorrect: true, explanation: "Betul! 'Walaupun' digunakan untuk menunjukkan pertentangan maklumat atau keadaan yang berlawanan." },
+                    { text: "dan", isCorrect: false, explanation: "Salah. 'Dan' ialah kata hubung gabungan untuk menggabungkan dua unsur yang setara." },
+                    { text: "agar", isCorrect: false, explanation: "Salah. 'Agar' (supaya) digunakan untuk menunjukkan tujuan atau harapan sesuatu perbuatan itu dilakukan." }
+                ]
+            },
+            // Ayat Betul & Salah (Tatabahasa, Imbuhan, Struktur)
+            {
+                category: "Ayat Betul & Salah",
+                question: "Pilih perkataan atau frasa yang betul untuk melengkapkan ayat ini: \"_____ sedang berhimpun di dewan sekolah.\"",
+                options: [
+                    { text: "Para-para pelajar", isCorrect: false, explanation: "Salah. Kata 'para' tidak boleh digandakan kerana ia sudah membawa maksud jamak (banyak)." },
+                    { text: "Semua pelajar-pelajar", isCorrect: false, explanation: "Salah. Penggunaan ini lewah (berlebihan). Perkataan 'Semua' sudah menunjukkan banyak, jadi 'pelajar' tidak perlu digandakan." },
+                    { text: "Para pelajar", isCorrect: true, explanation: "Tepat! 'Para' sudah membawa maksud jamak, jadi kata nama 'pelajar' dibiarkan dalam bentuk tunggal." }
+                ]
+            },
+            {
+                category: "Ayat Betul & Salah",
+                question: "Pilih kata sendi nama yang tepat: \"Perabot rumahnya yang mewah itu diperbuat _____ kayu jati yang diimport.\"",
+                options: [
+                    { text: "daripada", isCorrect: true, explanation: "Betul! 'Daripada' digunakan untuk menyatakan asal kejadian sesuatu benda/bahan." },
+                    { text: "dari", isCorrect: false, explanation: "Salah. 'Dari' hanya digunakan untuk ATM (Arah, Tempat, Masa)." },
+                    { text: "oleh", isCorrect: false, explanation: "Salah. 'Oleh' digunakan selepas kata kerja pasif berawalan 'di-' atau 'ter-' untuk menunjukkan pembuat." }
+                ]
+            },
+            {
+                category: "Ayat Betul & Salah",
+                question: "Pilih frasa yang paling tepat dari segi tatabahasa: \"Di pagi hari raya, umat Islam dituntut supaya saling _____ .\"",
+                options: [
+                    { text: "maaf-memaafkan", isCorrect: false, explanation: "Salah. Apabila menggunakan perkataan 'saling', kata kerja selepasnya tidak perlu digandakan berentak." },
+                    { text: "memaaf-maafkan", isCorrect: false, explanation: "Salah. Penggunaan ini menjadi lewah." },
+                    { text: "memaafkan", isCorrect: true, explanation: "Tepat! Struktur yang betul ialah 'saling' + kata kerja (tanpa gandaan). Contoh: saling memaafkan, saling membantu." }
+                ]
+            }
+        ];
+
+        let currentQuestionIndex = 0;
+        let score = 0;
+        let isQuestionAnswered = false;
+
+        // Warna berbeza untuk setiap kategori
+        const categoryColors = {
+            "Penjodoh Bilangan": "background:#db2777",
+            "Kata Kerja": "background:#2563eb",
+            "Kata Adjektif": "background:#7c3aed",
+            "Peribahasa": "background:#ca8a04",
+            "Kata Majmuk": "background:#16a34a",
+            "Kata Hubung": "background:#ea580c",
+            "Ayat Betul & Salah": "background:#0d9488"
+        };
+        const badgeColors = ["background:#4ade80", "background:#fb923c", "background:#c084fc"];
+
+        // Bunyi ringkas guna WebAudio (tiada fail diperlukan)
+        function playSound(type) {
+            try {
+                const ctx = new (window.AudioContext || window.webkitAudioContext)();
+                const notes = type === 'correct' ? [523, 659, 784] : [220, 180];
+                notes.forEach((freq, i) => {
+                    const osc = ctx.createOscillator();
+                    const gain = ctx.createGain();
+                    osc.connect(gain); gain.connect(ctx.destination);
+                    osc.type = 'triangle';
+                    osc.frequency.value = freq;
+                    const t = ctx.currentTime + i * 0.12;
+                    gain.gain.setValueAtTime(0.15, t);
+                    gain.gain.exponentialRampToValueAtTime(0.001, t + 0.25);
+                    osc.start(t); osc.stop(t + 0.3);
+                });
+            } catch (e) {}
+        }
+
+        function launchConfetti() {
+            const colors = ['#f97316','#22c55e','#3b82f6','#eab308','#ec4899','#8b5cf6'];
+            for (let i = 0; i < 70; i++) {
+                const p = document.createElement('div');
+                p.className = 'confetti-piece';
+                p.style.left = Math.random() * 100 + 'vw';
+                p.style.background = colors[Math.floor(Math.random() * colors.length)];
+                p.style.width = (6 + Math.random() * 8) + 'px';
+                p.style.height = (10 + Math.random() * 8) + 'px';
+                p.style.borderRadius = Math.random() > 0.5 ? '50%' : '2px';
+                p.style.animationDuration = (2.5 + Math.random() * 2.5) + 's';
+                p.style.animationDelay = (Math.random() * 1.5) + 's';
+                document.body.appendChild(p);
+                setTimeout(() => p.remove(), 6000);
+            }
+        }
+
+        function shuffleArray(array) {
+            for (let i = array.length - 1; i > 0; i--) {
+                const j = Math.floor(Math.random() * (i + 1));
+                [array[i], array[j]] = [array[j], array[i]];
+            }
+        }
+
+        function updateMonkey(progressPercentage) {
+            document.getElementById('monkey').style.left = `calc(${progressPercentage}% - 12px)`;
+        }
+
+        function startQuiz() {
+            currentQuestionIndex = 0;
+            score = 0;
+
+            shuffleArray(quizData);
+            quizData.forEach(q => shuffleArray(q.options));
+
+            document.getElementById('intro-screen').classList.add('hidden');
+            document.getElementById('result-screen').classList.add('hidden');
+            document.getElementById('quiz-screen').classList.remove('hidden');
+
+            loadQuestion();
+        }
+
+        function loadQuestion() {
+            isQuestionAnswered = false;
+            const currentQuestion = quizData[currentQuestionIndex];
+
+            document.getElementById('question-counter').innerText = `Soalan ${currentQuestionIndex + 1} / ${quizData.length}`;
+
+            const badge = document.getElementById('category-badge');
+            badge.innerText = currentQuestion.category;
+            badge.style.cssText = categoryColors[currentQuestion.category] || "background:#0d9488";
+
+            const progressPercentage = ((currentQuestionIndex) / quizData.length) * 100;
+            document.getElementById('progress-bar').style.width = `${progressPercentage}%`;
+            updateMonkey(progressPercentage);
+
+            const qContainer = document.getElementById('question-container');
+            qContainer.classList.remove('bounce-in');
+            void qContainer.offsetWidth; // reset animasi
+            qContainer.classList.add('bounce-in');
+
+            document.getElementById('question-text').innerHTML =
+                currentQuestion.question.replace('_____', '<span style="border-bottom:4px dashed #f59e0b; color:#d97706; padding:0 8px;">_____</span>');
+
+            const optionsContainer = document.getElementById('options-container');
+            optionsContainer.innerHTML = '';
+            optionsContainer.classList.remove('bounce-in');
+            void optionsContainer.offsetWidth;
+            optionsContainer.classList.add('bounce-in');
+
+            document.getElementById('feedback-container').classList.add('hidden');
+
+            currentQuestion.options.forEach((option, index) => {
+                const btn = document.createElement('button');
+                btn.className = 'option-btn w-full text-left p-4 bg-white font-bold text-lg text-gray-700 flex items-center';
+                btn.innerHTML = `<span class="inline-flex items-center justify-center w-10 h-10 rounded-full text-white text-center mr-3 font-extrabold shadow" style="${badgeColors[index % 3]}">${String.fromCharCode(65 + index)}</span> ${option.text}`;
+                btn.onclick = () => selectOption(btn, option);
+                optionsContainer.appendChild(btn);
+            });
+        }
+
+        function selectOption(selectedBtn, optionData) {
+            if (isQuestionAnswered) return;
+            isQuestionAnswered = true;
+
+            const optionsContainer = document.getElementById('options-container');
+            const allBtns = optionsContainer.getElementsByTagName('button');
+
+            for (let btn of allBtns) {
+                btn.disabled = true;
+                btn.classList.add('disabled-ans');
+            }
+
+            const feedbackContainer = document.getElementById('feedback-container');
+            const feedbackTitle = document.getElementById('feedback-title');
+            const feedbackText = document.getElementById('feedback-text');
+
+            if (optionData.isCorrect) {
+                playSound('correct');
+                selectedBtn.classList.remove('border-gray-200', 'bg-white', 'disabled-ans');
+                selectedBtn.classList.add('correct-ans');
+
+                score++;
+
+                feedbackContainer.className = 'mt-6 p-5 rounded-3xl border-4 bounce-in bg-green-100 border-green-400';
+                feedbackTitle.className = 'font-extrabold text-2xl mb-2 text-green-700';
+                feedbackTitle.innerHTML = '🎉 Jawapan Tepat!';
+                feedbackText.className = 'text-green-900 font-semibold';
+            } else {
+                playSound('wrong');
+                selectedBtn.classList.remove('border-gray-200', 'bg-white', 'disabled-ans');
+                selectedBtn.classList.add('wrong-ans');
+
+                const currentOptions = quizData[currentQuestionIndex].options;
+                const correctIndex = currentOptions.findIndex(o => o.isCorrect);
+                allBtns[correctIndex].classList.remove('disabled-ans');
+                allBtns[correctIndex].classList.add('correct-ans', 'opacity-70');
+
+                feedbackContainer.className = 'mt-6 p-5 rounded-3xl border-4 bounce-in bg-red-100 border-red-400';
+                feedbackTitle.className = 'font-extrabold text-2xl mb-2 text-red-700';
+                feedbackTitle.innerHTML = '💪 Semangat, Cuba Lagi!';
+                feedbackText.className = 'text-red-900 font-semibold';
+            }
+
+            feedbackText.innerHTML = optionData.explanation;
+            feedbackContainer.classList.remove('hidden');
+
+            if (currentQuestionIndex === quizData.length - 1) {
+                document.getElementById('next-btn').innerText = 'Lihat Hadiah 🏆';
+            } else {
+                document.getElementById('next-btn').innerHTML = 'Soalan Seterusnya ➔';
+            }
+        }
+
+        function nextQuestion() {
+            currentQuestionIndex++;
+            if (currentQuestionIndex < quizData.length) {
+                loadQuestion();
+            } else {
+                showResults();
+            }
+        }
+
+        function showResults() {
+            document.getElementById('quiz-screen').classList.add('hidden');
+            const resultScreen = document.getElementById('result-screen');
+            resultScreen.classList.remove('hidden');
+
+            document.getElementById('final-score').innerText = `${score} / ${quizData.length}`;
+
+            document.getElementById('progress-bar').style.width = `100%`;
+            updateMonkey(100);
+
+            const messageEl = document.getElementById('score-message');
+            const encourageEl = document.getElementById('encouragement-text');
+            const starsEl = document.getElementById('stars-display');
+
+            const percentage = (score / quizData.length) * 100;
+            let starCount = percentage === 100 ? 3 : percentage >= 70 ? 2 : percentage >= 40 ? 1 : 0;
+
+            starsEl.innerHTML = '⭐'.repeat(starCount) + '<span style="opacity:0.25;">⭐</span>'.repeat(3 - starCount);
+
+            if (percentage === 100) {
+                launchConfetti();
+                messageEl.innerText = "Cemerlang & Sempurna! 🌟";
+                messageEl.className = "text-xl mt-2 font-extrabold text-green-600";
+                encourageEl.innerText = "Tahniah! Penguasaan tatabahasa Bahasa Melayu anda sangat mantap.";
+            } else if (percentage >= 70) {
+                launchConfetti();
+                messageEl.innerText = "Sangat Baik! 🎉";
+                messageEl.className = "text-xl mt-2 font-extrabold text-teal-600";
+                encourageEl.innerText = "Usaha yang bagus. Ada sedikit sahaja yang perlu diperbaiki.";
+            } else if (percentage >= 40) {
+                messageEl.innerText = "Bagus, Teruskan! 💪";
+                messageEl.className = "text-xl mt-2 font-extrabold text-yellow-600";
+                encourageEl.innerText = "Cuba tingkatkan lagi kefahaman anda. Sila kaji penerangan jawapan tadi.";
+            } else {
+                messageEl.innerText = "Jangan Berputus Asa! 🦁";
+                messageEl.className = "text-xl mt-2 font-extrabold text-red-600";
+                encourageEl.innerText = "Praktis makes perfect! Mari buat latihan ini semula untuk kukuhkan ingatan.";
+            }
+        }
+
+        function restartQuiz() {
+            startQuiz();
+        }
+    </script>
+</body>
+</html>
